@@ -10,8 +10,8 @@ userRouter.patch(
   '/users/me',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().required().min(1),
-      email: Joi.string().required().min(1),
+      name: Joi.string().required().min(2).max(30),
+      email: Joi.string().required().email().min(1),
     }),
   }),
   updateUserInfo,

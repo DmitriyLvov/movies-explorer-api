@@ -41,8 +41,7 @@ app.use(requestLogger);
 
 // Маршруты
 app.use(router);
-// Логгирование ошибок
-app.use(errorLogger);
+
 // Ощибки авторизации
 app.use(errors());
 
@@ -50,6 +49,9 @@ app.use(errors());
 app.use((req, res, next) => {
   next(new NotFoundError('404 Page not found'));
 });
+
+// Логгирование ошибок
+app.use(errorLogger);
 
 // Центральная обработка ошибок
 app.use(errorCatcher);

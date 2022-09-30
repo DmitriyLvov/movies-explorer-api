@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { isURL } = require('validator');
 const { celebrate, Joi } = require('celebrate');
 const {
   getSavedMovies,
@@ -18,12 +19,27 @@ movieRouter.post(
       country: Joi.string().required().min(1),
       director: Joi.string().required().min(1),
       duration: Joi.number().required().min(1),
-      year: Joi.number().required().min(1),
+      year: Joi.string().required().min(1),
       description: Joi.string().required().min(1),
-      image: Joi.string().required().min(1),
-      trailerLink: Joi.string().required().min(1),
-      thumbnail: Joi.string().required().min(1),
-      movieId: Joi.string().hex().required().length(24),
+      image: Joi.string().required().custom((value, helpers) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return helpers.message('Поле image заполнено некорректно (не соответствует формату URL)');
+      }),
+      trailerLink: Joi.string().required().custom((value, helpers) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return helpers.message('Поле trailerLink заполнено некорректно (не соответствует формату URL)');
+      }),
+      thumbnail: Joi.string().required().custom((value, helpers) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return helpers.message('Поле thumbnail заполнено некорректно (не соответствует формату URL)');
+      }),
+      movieId: Joi.number().required().min(1),
       nameRU: Joi.string().required().min(1),
       nameEN: Joi.string().required().min(1),
     }),

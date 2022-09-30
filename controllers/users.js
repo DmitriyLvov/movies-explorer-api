@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
-const RepeatedEmailError = require('../errors/repeated-email-err');
+const ConflictError = require('../errors/conflict-err');
 
 const CREATED_STATUS = 201;
 
@@ -22,14 +22,14 @@ module.exports.createUser = (req, res, next) => {
       .catch((err) => {
         if (err.code === 11000) {
           return next(
-            new RepeatedEmailError(
+            new ConflictError(
               'This email existed. You need to use unique email.',
             ),
           );
         }
         return next(err);
       });
-  });
+  }).catch(next);
 };
 
 module.exports.login = (req, res, next) => {
@@ -72,5 +72,14 @@ module.exports.updateUserInfo = (req, res, next) => {
       }
       res.send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.code === 11000) {
+        return next(
+          new ConflictError(
+            'This email existed. You need to use unique email.',
+          ),
+        );
+      }
+      return next(err);
+    });
 };
