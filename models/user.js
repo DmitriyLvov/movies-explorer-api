@@ -46,7 +46,7 @@ userSchema.statics.findUserByCredentials = function checkEmail(
         if (!res) {
           return Promise.reject(new NotAccessError('Wrong email or password'));
         }
-        return Promise.resolve({ _id: user._id });
+        return Promise.resolve({ _id: user._id, name: user.name, email: user.email });
       });
     });
 };

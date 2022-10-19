@@ -14,11 +14,20 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     })
-      .then((newUser) => res.status(CREATED_STATUS).send({
-        name: newUser.name,
-        email: newUser.email,
-        _id: newUser._id,
-      }))
+      .then((newUser) => {
+        const { NODE_ENV, JWT_SECRET } = process.env;
+        const token = jwt.sign(
+          { _id: newUser._id },
+          NODE_ENV === 'production' ? JWT_SECRET : 'DEV_SECRET',
+          { expiresIn: '7d' },
+        );
+        return res.status(CREATED_STATUS).send({
+          name: newUser.name,
+          email: newUser.email,
+          _id: newUser._id,
+          token,
+        });
+      })
       .catch((err) => {
         if (err.code === 11000) {
           return next(
@@ -32,20 +41,21 @@ module.exports.createUser = (req, res, next) => {
   }).catch(next);
 };
 
-module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then(({ _id }) => {
+module.exports.login = (req, res, next) => (
+  User.findUserByCredentials(req.body.email, req.body.password)
+    .then(({ _id, name, email }) => {
       const { NODE_ENV, JWT_SECRET } = process.env;
       const token = jwt.sign(
         { _id },
         NODE_ENV === 'production' ? JWT_SECRET : 'DEV_SECRET',
         { expiresIn: '7d' },
       );
-      res.send({ message: 'Success', token });
+      res.send({
+        message: 'Success', token, name, email, _id,
+      });
     })
-    .catch(next);
-};
+    .catch(next)
+);
 
 module.exports.getUserInfo = (req, res, next) => {
   const { _id } = req.user;

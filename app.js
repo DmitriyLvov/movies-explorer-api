@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const cors = require('cors');
+const cors = require('cors');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const { errorLogger, requestLogger } = require('./middlewares/logger');
@@ -14,21 +14,23 @@ require('dotenv').config();
 const { PORT = 3000, DB_PATH, NODE_ENV } = process.env;
 const app = express();
 
-// const options = {
-//   origin: [
-//     'http://localhost:3000',
-//     'https://dlvov.nomoredomains.sbs',
-//     'https://dmitriylvov.github.io/react-mesto-auth/',
-//     'http://dlvov.nomoredomains.sbs',
-//   ],
-//   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-//   preflightContinue: false,
-//   optionsSuccessStatus: 204,
-//   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
-//   credentials: true,
-// };
+const options = {
+  origin: [
+    'http://localhost:3000',
+    'https://localhost:3000',
+    'https://dlvov.nomoredomains.sbs',
+    'https://dmitriylvov.github.io/react-mesto-auth/',
+    'http://dlvov.nomoredomains.sbs',
+  ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Access-Control-Allow-Origin'],
+  credentials: true,
+};
 
-// app.use('*', cors(options));
+app.use('*', cors(options));
+// app.use('*', cors());
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -56,7 +58,7 @@ app.use(errorLogger);
 // Центральная обработка ошибок
 app.use(errorCatcher);
 
-app.listen(PORT, () => {
+ app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   process.stdout.write(`App listening on port ${PORT}\n`);
 });
