@@ -18,9 +18,8 @@ const options = {
   origin: [
     'http://localhost:3000',
     'https://localhost:3000',
-    'https://dlvov.nomoredomains.sbs',
-    'https://dmitriylvov.github.io/react-mesto-auth/',
-    'http://dlvov.nomoredomains.sbs',
+    'http://ya-movies-explorer.nomoredomains.icu',
+    'https://ya-movies-explorer.nomoredomains.icu',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
@@ -58,7 +57,7 @@ app.use(errorLogger);
 // Центральная обработка ошибок
 app.use(errorCatcher);
 
- app.listen(PORT, () => {
+app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   process.stdout.write(`App listening on port ${PORT}\n`);
 });
